@@ -29,6 +29,18 @@
             </intent-filter>
         </activity>
 
+        <receiver
+            android:name=".widget.AutoApsWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/autoaps_widget_info" />
+        </receiver>
+
         <!--
           Android Auto has no health category. The category below only decides where the
           launcher icon appears for sideloaded installs; see docs/distribution.md before

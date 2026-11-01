@@ -8,6 +8,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
+import io.autoaps.app.widget.WidgetRefreshWorker
 import io.autoaps.core.DisplayFormatter
 import io.autoaps.core.DisplaySettings
 import io.autoaps.core.GlucoseUnit
@@ -83,6 +84,7 @@ class MainActivity : ComponentActivity() {
         settings.unitsOverride = selectedUnits()
         urlInput.setText(settings.nightscoutUrl)
         status.setText(R.string.settings_saved)
+        WidgetRefreshWorker.schedule(this, immediately = true)
         return true
     }
 

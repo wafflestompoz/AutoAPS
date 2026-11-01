@@ -18,6 +18,10 @@
     <string name="disclaimer_body">AutoAPS is not a medical device and is not approved by the FDA or any other regulator. It shows a copy of data from your own Nightscout site, which can be delayed, missing or wrong.\n\n• Never make treatment decisions (insulin, carbs, or anything else) from AutoAPS. Confirm with your CGM receiver or app, or a fingerstick.\n• AutoAPS has no alarms. Keep your CGM and loop alerts switched on.\n• Readings older than 15 minutes are marked STALE.\n• Do not look at or set up AutoAPS while driving. If your blood sugar may be low, stop driving safely and treat it.\n• AutoAPS only reads data. It cannot dose insulin or control any device.\n\nAutoAPS is an independent project and is not affiliated with or endorsed by the Nightscout Foundation, AndroidAPS, Dexcom, Abbott, Medtronic, Google or any other company. It is provided \"as is\" without warranty of any kind; you use it at your own risk.</string>
     <string name="disclaimer_accept">I understand and accept</string>
 
+    <!-- Widget -->
+    <string name="widget_label">AutoAPS glucose</string>
+    <string name="widget_description">Current glucose, trend, IOB, COB and basal from your Nightscout site.</string>
+
     <!-- Car screen -->
     <string name="car_title">AutoAPS</string>
     <string name="car_refresh">Refresh</string>

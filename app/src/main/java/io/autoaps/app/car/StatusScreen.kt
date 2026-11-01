@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import io.autoaps.app.R
 import io.autoaps.app.Settings
+import io.autoaps.app.SnapshotCache
 import io.autoaps.core.DisplayFormatter
 import io.autoaps.core.DisplaySettings
 import io.autoaps.core.GlucoseUnit
@@ -32,10 +33,12 @@ import kotlinx.coroutines.withContext
  */
 class StatusScreen(carContext: CarContext) : Screen(carContext) {
     private val settings = Settings(carContext)
+    private val cache = SnapshotCache(carContext)
 
-    private var snapshot: NightscoutSnapshot? = null
+    // Start from the last reading the widget or a previous drive saved; its age is shown.
+    private var snapshot: NightscoutSnapshot? = cache.load()
     private var lastError: String? = null
-    private var loaded = false
+    private var loaded = snapshot != null
     private var refreshJob: Job? = null
 
     init {
@@ -57,7 +60,7 @@ class StatusScreen(carContext: CarContext) : Screen(carContext) {
         val result = withContext(Dispatchers.IO) {
             runCatching { settings.client().fetchSnapshot(settings.unitsOverride) }
         }
-        result.onSuccess { snapshot = it; lastError = null }
+        result.onSuccess { snapshot = it; lastError = null; cache.save(it) }
             .onFailure { lastError = it.message ?: "Unknown error" }
         loaded = true
         invalidate()

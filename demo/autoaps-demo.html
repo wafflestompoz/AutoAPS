@@ -113,6 +113,22 @@ header p { margin: 4px 0 0; color: var(--muted); max-width: 65ch; }
 .notes li { border-top: 1px solid var(--line); padding-top: 10px; }
 .notes b { font-weight: 600; }
 .feed { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; overflow-x: auto; }
+.widgets-sec { display: grid; gap: 12px; }
+.widgets-sec h2 { font-family: var(--font-display); font-size: 20px; margin: 0; }
+.wall { border-radius: 18px; padding: 18px; background: linear-gradient(150deg, #24476b, #4b3a6b 55%, #2c5a5a); display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
+.wgt { background: #f4f7fb; color: #16202b; border-radius: 18px; padding: 10px 14px; display: flex; flex-direction: column; justify-content: center; gap: 2px; min-width: 0; font-family: var(--font-display); }
+.wgt.s { width: 150px; height: 84px; } .wgt.m { width: 250px; height: 140px; } .wgt.l { width: 320px; max-width: 100%; height: 170px; }
+.wgt .g { font-weight: 700; font-size: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.wgt.m .g, .wgt.l .g { font-size: 28px; }
+.wgt .a { font-size: 13px; color: #4f5d6b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
+.wgt .a .wf { font-weight: 700; font-size: 11px; padding: 0 6px; border-radius: 6px; background: #ffdad6; color: #410002; }
+.wgt .r { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.wgt .r:first-of-type { margin-top: 4px; }
+.wgt .f { font-size: 12px; color: #4f5d6b; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wgt-label { font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,.8); margin-top: 4px; }
+.wgt-wrap { display: flex; flex-direction: column; min-width: 0; max-width: 100%; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wgt { background: #1d2530; color: #e6ebf0; } :root:not([data-theme="light"]) .wgt .a, :root:not([data-theme="light"]) .wgt .f { color: #a8b5c2; } }
+:root[data-theme="dark"] .wgt { background: #1d2530; color: #e6ebf0; } :root[data-theme="dark"] .wgt .a, :root[data-theme="dark"] .wgt .f { color: #a8b5c2; }
 .feed pre { margin: 0; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55; color: var(--fg); }
 </style>
 
@@ -150,6 +166,12 @@ header p { margin: 4px 0 0; color: var(--muted); max-width: 65ch; }
     </div>
     <div class="chips" id="chips"></div>
     <p class="caption" id="caption"></p>
+  </section>
+
+  <section class="widgets-sec" aria-label="Home screen widget">
+    <h2>Home screen widget</h2>
+    <p class="caption">The widget comes in three sizes and shows the same scenario as the car screen above. Google is bringing phone widgets to the Android Auto dashboard, so this same widget is meant to appear in the car once that reaches your phone. It refreshes about every 5 minutes, and tapping it opens setup.</p>
+    <div class="wall" id="wall"></div>
   </section>
 
   <div class="lower">
@@ -273,6 +295,7 @@ header p { margin: 4px 0 0; color: var(--muted); max-width: 65ch; }
       $("carbtn").onclick = () => refresh();
       $("phone-status").textContent = "Not set up yet.";
       $("feed").textContent = "(no requests until setup is complete)";
+      renderWidgets(null, sc);
       return;
     }
     if (state.loading) {
@@ -294,6 +317,19 @@ header p { margin: 4px 0 0; color: var(--muted); max-width: 65ch; }
 
     $("phone-status").textContent = sc.error ? `Couldn't connect: ${sc.error}` : `Connected.\n${L.glucose}  (${L.flag === "STALE" ? "STALE: " : ""}${L.ageText})\n${L.iobCob}\n${L.basal}`;
     $("feed").textContent = feedFor(sc, s);
+    renderWidgets(L, sc);
+  }
+
+  function renderWidgets(L, sc) {
+    const sizes = [["s", "Small 2×1"], ["m", "Medium 3×2"], ["l", "Large 4×2"]];
+    $("wall").innerHTML = sizes.map(([k, label]) => {
+      if (!L) return `<div class="wgt-wrap"><div class="wgt ${k}"><div class="r">Tap to set up AutoAPS</div></div><div class="wgt-label">${label}</div></div>`;
+      const flag = L.flag ? `<span class="wf">${L.flag}</span>` : "";
+      let inner = `<div class="g">${esc(L.glucose)}</div><div class="a">${flag}${esc(L.ageText)}</div>`;
+      if (k !== "s") inner += `<div class="r">${esc(L.iobCob)}</div><div class="r">${esc(L.basal)}</div>`;
+      if (k === "l") inner += `<div class="f">${esc(sc.error ? "Can't update: " + sc.error : "Not for treatment decisions.")}</div>`;
+      return `<div class="wgt-wrap"><div class="wgt ${k}">${inner}</div><div class="wgt-label">${label}</div></div>`;
+    }).join("");
   }
 
   function feedFor(sc, s) {

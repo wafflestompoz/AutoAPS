@@ -23,6 +23,7 @@ AutoAPS is **read-only** and **not a medical device**. Read [DISCLAIMER.md](DISC
 
 - **Phone app** (`MainActivity`): accept the safety notice, enter your Nightscout address and a read-only access token, pick units, and test the connection.
 - **Car app** (`StatusScreen`): one `PaneTemplate` from the Android for Cars App Library, refreshed every 60 seconds. Its title and row count never change, so updates count as template refreshes and never hit the host's step limit.
+- **Home screen widget** (`widget/`): a Jetpack Glance widget in three sizes, refreshed about every 5 minutes by WorkManager. It follows Google's [Adapt widgets for cars](https://developer.android.com/design/ui/cars/guides/flows/widgets) guidance (responsive, no scrolling, light/dark, dynamic color), so it's ready for the Android Auto dashboard once Google's car widget support reaches users. Google hasn't published which third-party widgets the car will accept, so treat that as unconfirmed.
 - **Data**: `GET /api/v2/properties/bgnow,delta,direction,iob,cob,basal`, falling back to `/api/v1/entries/sgv.json` on older sites. Units come from `/api/v1/status.json` unless the user overrides them. The token is sent as the standard `?token=` query parameter.
 - **Safety behavior**: readings 15 minutes or older are labelled STALE and their trend arrow and delta are hidden; LOW/HIGH labels appear below 70 or above 180 mg/dL; there are no alarms, by design.
 
