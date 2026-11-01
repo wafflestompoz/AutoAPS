@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AutoAPS</string>
+
+    <string name="settings_url_label">Nightscout address</string>
+    <string name="settings_url_hint">https://your-site.example.com</string>
+    <string name="settings_token_label">Access token (read-only role)</string>
+    <string name="settings_token_hint">e.g. autoaps-1a2b3c4d5e6f7a8b</string>
+    <string name="settings_token_help">In Nightscout, open Admin Tools, add a subject with the \"readable\" role, and copy its token here. Do not use your API secret.</string>
+    <string name="settings_units_label">Units</string>
+    <string name="settings_save">Save</string>
+    <string name="settings_test">Test connection</string>
+    <string name="settings_saved">Saved. Open AutoAPS from the Android Auto launcher.</string>
+    <string name="settings_testing">Connecting…</string>
+    <string name="settings_need_disclaimer">Please read and accept the notice above first.</string>
+
+    <string name="disclaimer_title">Important: read before use</string>
+    <string name="disclaimer_body">AutoAPS is not a medical device and is not approved by the FDA or any other regulator. It shows a copy of data from your own Nightscout site, which can be delayed, missing or wrong.\n\n• Never make treatment decisions (insulin, carbs, or anything else) from AutoAPS. Confirm with your CGM receiver or app, or a fingerstick.\n• AutoAPS has no alarms. Keep your CGM and loop alerts switched on.\n• Readings older than 15 minutes are marked STALE.\n• Do not look at or set up AutoAPS while driving. If your blood sugar may be low, stop driving safely and treat it.\n• AutoAPS only reads data. It cannot dose insulin or control any device.\n\nAutoAPS is an independent project and is not affiliated with or endorsed by the Nightscout Foundation, AndroidAPS, Dexcom, Abbott, Medtronic, Google or any other company. It is provided \"as is\" without warranty of any kind; you use it at your own risk.</string>
+    <string name="disclaimer_accept">I understand and accept</string>
+
+    <!-- Car screen -->
+    <string name="car_title">AutoAPS</string>
+    <string name="car_refresh">Refresh</string>
+    <string name="car_setup_needed">Open AutoAPS on your phone (while parked) to enter your Nightscout address and accept the safety notice.</string>
+    <string name="car_footer">Not for treatment decisions. Confirm with your CGM.</string>
+    <string name="car_error_prefix">Can\'t update</string>
+</resources>

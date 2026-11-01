@@ -1,0 +1,12 @@
+{
+  "bgnow": {"mean": 142, "last": 142, "mills": 1761998400000,
+            "sgvs": [{"_id": "x", "mgdl": 142, "mills": 1761998400000, "device": "xDrip-DexcomG7", "direction": "FortyFiveUp", "type": "sgv", "scaled": 142}]},
+  "delta": {"absolute": 4, "elapsedMins": 5, "interpolated": false, "mean5MinsAgo": 138, "mgdl": 4, "scaled": 4, "display": "+4", "previous": {"mean": 138, "last": 138, "mills": 1761998100000}},
+  "direction": {"display": "↗", "value": "FortyFiveUp", "label": "↗", "entity": "&#8599;"},
+  "iob": {"iob": 1.234, "activity": 0.01, "source": "OpenAPS", "device": "openaps://samsung SM-S911B", "mills": 1761998390000, "display": "1.23", "displayLine": "IOB: 1.23U"},
+  "cob": {"cob": 18.4, "source": "OpenAPS", "device": "openaps://samsung SM-S911B", "mills": 1761998390000, "display": 18, "displayLine": "COB: 18g"},
+  "basal": {"display": "T: 0.500U", "current": {
+     "basal": 0.8,
+     "treatment": {"eventType": "Temp Basal", "duration": 30, "percent": -38, "rate": 0.5, "absolute": 0.5, "mills": 1761998220000, "endmills": 1762000020000},
+     "tempbasal": 0.5, "totalbasal": 0.5}}
+}

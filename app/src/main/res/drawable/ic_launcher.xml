@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder icon: a drop with a trend line. Replace before release. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#1E3A5F" android:pathData="M0,0h108v108h-108z" />
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M54,20C54,20 30,48 30,64a24,24 0,0 0,48 0C78,48 54,20 54,20z" />
+    <path android:strokeColor="#1E3A5F" android:strokeWidth="5" android:strokeLineCap="round"
+        android:fillColor="#00000000" android:pathData="M40,68L50,58L58,64L68,52" />
+</vector>

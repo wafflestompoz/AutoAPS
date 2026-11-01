@@ -1,0 +1,8 @@
+{
+  "bgnow": {"last": 95, "mills": 1761998400000, "sgvs": [{"mgdl": 95, "mills": 1761998400000, "direction": "Flat"}]},
+  "delta": {"mgdl": -2, "absolute": -2},
+  "direction": {"value": "Flat"},
+  "iob": {"iob": 0},
+  "cob": {"cob": 0},
+  "basal": {"display": "B: 0.800U", "current": {"basal": 0.8, "tempbasal": 0.8, "totalbasal": 0.8}}
+}

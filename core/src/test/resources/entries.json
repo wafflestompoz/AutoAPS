@@ -1,0 +1,4 @@
+[
+  {"_id": "a", "sgv": 182, "date": 1761998400000, "dateString": "2025-11-01T12:00:00.000Z", "direction": "SingleUp", "type": "sgv"},
+  {"_id": "b", "sgv": 171, "date": 1761998100000, "dateString": "2025-11-01T11:55:00.000Z", "direction": "FortyFiveUp", "type": "sgv"}
+]
