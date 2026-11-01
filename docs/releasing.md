@@ -12,6 +12,8 @@ GitHub Actions (`.github/workflows/build.yml`) builds every push and pull reques
    ```
 3. The workflow builds `AutoAPS-0.1.0.apk`, writes a SHA-256 checksum, and publishes a GitHub Release with both files and the safety notice in the release text.
 
+Tags with a suffix, such as `v0.1.0-beta.1`, are published as pre-releases. GitHub labels them as such and doesn't show them as the "Latest" release.
+
 ## Signing (set up once)
 
 Without signing secrets, releases use a debug-signed APK. It installs fine, but users would have to uninstall it before they could install a properly signed build later. So set up signing before the first public release.

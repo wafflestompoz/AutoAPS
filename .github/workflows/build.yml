@@ -110,6 +110,8 @@ jobs:
           files: |
             AutoAPS-*.apk
             AutoAPS-*.apk.sha256
+          # Tags with a suffix, like v0.1.0-beta.1, are published as pre-releases.
+          prerelease: ${{ contains(github.ref_name, '-') }}
           generate_release_notes: true
           body: |
             **AutoAPS is not a medical device. Never make treatment decisions from it.** Read the [safety notice](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/DISCLAIMER.md) before installing.
