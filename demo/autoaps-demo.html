@@ -204,7 +204,7 @@ header p { margin: 4px 0 0; color: var(--muted); max-width: 65ch; }
       <ul class="notes">
         <li><b>One screen, three rows.</b> The title and row count stay fixed, so Android Auto treats each 60-second update as a refresh. That keeps the app clear of the car's limit on screen changes.</li>
         <li><b>Stale readings.</b> After 15 minutes without new data, the trend arrow and delta are hidden and the reading is marked STALE. Press "Wait 5 minutes" a few times to see it.</li>
-        <li><b>LOW and HIGH labels</b> appear below 70 and above 180 mg/dL. The app has no alarms on purpose.</li>
+        <li><b>LOW and HIGH labels</b> follow the target range on the user's Nightscout site, or a range they set in the app. This preview uses 70 to 180 mg/dL. The app has no alarms on purpose.</li>
         <li><b>Errors keep the last reading.</b> If Nightscout can't be reached, the last good values stay on screen with their age, and the reason appears on the bottom row.</li>
       </ul>
       <div>
@@ -261,9 +261,9 @@ header p { margin: 4px 0 0; color: var(--muted); max-width: 65ch; }
   const SCENARIOS = [
     { id: "steady", label: "In range, temp basal running", caption: "AAPS has set a temp basal below the scheduled 0.80 U/h. The phone app's Test connection button shows the same values.",
       data: { mgdl: 142, delta: 4, direction: "FortyFiveUp", iob: 1.234, cob: 18.4, scheduled: 0.8, temp: { rate: 0.5, percent: 62, remaining: 26 } }, ageMin: 1 },
-    { id: "low", label: "Low and falling", caption: "Below 70 mg/dL the reading gets a LOW label. The loop has suspended basal, so the temp basal is 0 U/h.",
+    { id: "low", label: "Low and falling", caption: "Below the bottom of the target range the reading gets a LOW label. The loop has suspended basal, so the temp basal is 0 U/h.",
       data: { mgdl: 64, delta: -7, direction: "SingleDown", iob: 0.41, cob: 0, scheduled: 0.8, temp: { rate: 0, percent: 0, remaining: 18 } }, ageMin: 2 },
-    { id: "high", label: "High after a meal", caption: "Above 180 mg/dL the reading gets a HIGH label. COB shows carbs still being absorbed.",
+    { id: "high", label: "High after a meal", caption: "Above the top of the target range the reading gets a HIGH label. COB shows carbs still being absorbed.",
       data: { mgdl: 231, delta: 12, direction: "SingleUp", iob: 3.86, cob: 42, scheduled: 0.8, temp: { rate: 2.4, percent: 300, remaining: 21 } }, ageMin: 0 },
     { id: "scheduled", label: "No temp basal", caption: "When no temp basal is running, the bottom row shows the scheduled profile basal.",
       data: { mgdl: 108, delta: 0.2, direction: "Flat", iob: 0, cob: 0, scheduled: 0.85, temp: null }, ageMin: 4 },

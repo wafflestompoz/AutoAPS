@@ -49,6 +49,21 @@ class DisplayFormatterTest {
     }
 
     @Test
+    fun `uses the site target range for LOW and HIGH`() {
+        val range = TargetRange(90.0, 140.0)
+        assertEquals("HIGH", DisplayFormatter.format(snapshot(mgdl = 150.0).copy(targetRange = range), t0, DisplaySettings()).rangeFlag)
+        assertEquals("LOW", DisplayFormatter.format(snapshot(mgdl = 85.0).copy(targetRange = range), t0, DisplaySettings()).rangeFlag)
+        assertNull(DisplayFormatter.format(snapshot(mgdl = 150.0).copy(targetRange = TargetRange(80.0, 200.0)), t0, DisplaySettings()).rangeFlag)
+    }
+
+    @Test
+    fun `range set in the app wins over the site range`() {
+        val fromSite = snapshot(mgdl = 150.0).copy(targetRange = TargetRange(80.0, 200.0))
+        val custom = DisplaySettings(rangeOverride = TargetRange(70.0, 140.0))
+        assertEquals("HIGH", DisplayFormatter.format(fromSite, t0, custom).rangeFlag)
+    }
+
+    @Test
     fun `scheduled basal when no temp`() {
         assertEquals("Basal 0.80 U/h (scheduled)", DisplayFormatter.formatBasal(snapshot(temp = null)))
     }

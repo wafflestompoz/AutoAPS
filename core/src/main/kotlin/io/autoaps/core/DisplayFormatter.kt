@@ -22,8 +22,10 @@ data class DisplayLines(
 data class DisplaySettings(
     val units: GlucoseUnit = GlucoseUnit.MGDL,
     val staleAfterMinutes: Int = 15,
-    val lowMgdl: Int = 70,
-    val highMgdl: Int = 180,
+    /** A range the user set in the app. When set, it wins over the Nightscout site's range. */
+    val rangeOverride: TargetRange? = null,
+    /** Used only when there is no override and the Nightscout site doesn't report a range. */
+    val fallbackRange: TargetRange = TargetRange(70.0, 180.0),
 )
 
 object DisplayFormatter {
@@ -54,10 +56,11 @@ object DisplayFormatter {
             else -> "${formatMinutes(ageMinutes)} ago"
         }
 
+        val range = settings.rangeOverride ?: snapshot.targetRange ?: settings.fallbackRange
         val rangeFlag = when {
             glucose == null || isStale -> null
-            glucose < settings.lowMgdl -> "LOW"
-            glucose > settings.highMgdl -> "HIGH"
+            glucose < range.lowMgdl -> "LOW"
+            glucose > range.highMgdl -> "HIGH"
             else -> null
         }
 

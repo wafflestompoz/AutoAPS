@@ -93,7 +93,7 @@ class StatusScreen(carContext: CarContext) : Screen(carContext) {
             pane.addRow(row("Basal --", carContext.getString(R.string.car_footer)))
         } else {
             val units = settings.unitsOverride ?: data.serverUnits ?: GlucoseUnit.MGDL
-            val lines = DisplayFormatter.format(data, now, DisplaySettings(units = units))
+            val lines = DisplayFormatter.format(data, now, DisplaySettings(units = units, rangeOverride = settings.rangeOverride))
             val ageText = listOfNotNull(lines.rangeFlag, lines.age).joinToString("  ·  ")
             val footer = lastError?.let { "${carContext.getString(R.string.car_error_prefix)}: $it" }
                 ?: carContext.getString(R.string.car_footer)

@@ -3,6 +3,7 @@ package io.autoaps.app
 import android.content.Context
 import io.autoaps.core.GlucoseUnit
 import io.autoaps.core.NightscoutSnapshot
+import io.autoaps.core.TargetRange
 import io.autoaps.core.TempBasal
 import io.autoaps.core.Trend
 
@@ -29,6 +30,10 @@ class SnapshotCache(context: Context) {
                 t.remainingMinutes?.let { putLong("temp_end", System.currentTimeMillis() + it * 60_000L) }
             }
             s.serverUnits?.let { putString("units", it.name) }
+            s.targetRange?.let {
+                putFloat("target_low", it.lowMgdl.toFloat())
+                putFloat("target_high", it.highMgdl.toFloat())
+            }
             error?.let { putString("error", it) }
             putLong("fetched_at", System.currentTimeMillis())
         }.apply()
@@ -62,6 +67,7 @@ class SnapshotCache(context: Context) {
             // A temp basal that has run out is no longer active.
             tempBasal = temp?.takeUnless { it.remainingMinutes == 0 },
             serverUnits = prefs.getString("units", null)?.let { runCatching { GlucoseUnit.valueOf(it) }.getOrNull() },
+            targetRange = float("target_low")?.let { low -> float("target_high")?.let { high -> TargetRange(low, high) } },
         )
     }
 }

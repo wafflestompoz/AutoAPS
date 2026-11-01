@@ -8,6 +8,10 @@
     <string name="settings_token_hint">e.g. autoaps-1a2b3c4d5e6f7a8b</string>
     <string name="settings_token_help">In Nightscout, open Admin Tools, add a subject with the \"readable\" role, and copy its token here. Do not use your API secret.</string>
     <string name="settings_units_label">Units</string>
+    <string name="settings_range_custom">Set my own LOW and HIGH range</string>
+    <string name="settings_range_help">Leave this off to use the target range from your Nightscout site.</string>
+    <string name="settings_range_low">Low (%1$s)</string>
+    <string name="settings_range_high">High (%1$s)</string>
     <string name="settings_save">Save</string>
     <string name="settings_test">Test connection</string>
     <string name="settings_saved">Saved. Open AutoAPS from the Android Auto launcher.</string>

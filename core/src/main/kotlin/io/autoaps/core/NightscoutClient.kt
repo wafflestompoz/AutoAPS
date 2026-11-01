@@ -26,24 +26,27 @@ class NightscoutClient(
         ?: throw NightscoutException("That doesn't look like a valid Nightscout address.")
 
     fun fetchSnapshot(unitsOverride: GlucoseUnit? = null): NightscoutSnapshot {
-        val units = unitsOverride ?: runCatching { fetchServerUnits() }.getOrNull()
+        val server = runCatching { fetchServerSettings() }.getOrNull()
+        val units = unitsOverride ?: server?.units
+        val range = server?.targetRange
 
         val properties = runCatching {
             NightscoutParser.parseProperties(
                 get("api/v2/properties/bgnow,delta,direction,iob,cob,basal"), clock(), units,
             )
         }
-        properties.getOrNull()?.takeIf { it.glucoseMgdl != null }?.let { return it }
+        properties.getOrNull()?.takeIf { it.glucoseMgdl != null }?.let { return it.copy(targetRange = range) }
 
         // Older or restricted sites: fall back to the plain entries endpoint.
         val fallback = runCatching { NightscoutParser.parseEntries(get("api/v1/entries/sgv.json?count=2"), units) }
         fallback.getOrNull()?.let { entries ->
             val props = properties.getOrNull()
-            return if (props == null) entries else props.copy(
+            return if (props == null) entries.copy(targetRange = range) else props.copy(
                 glucoseMgdl = entries.glucoseMgdl,
                 readingTimeMillis = entries.readingTimeMillis,
                 trend = entries.trend,
                 deltaMgdl = entries.deltaMgdl,
+                targetRange = range,
             )
         }
 
@@ -51,7 +54,7 @@ class NightscoutClient(
         throw error as? NightscoutException ?: NightscoutException("Couldn't read data from Nightscout.", error)
     }
 
-    fun fetchServerUnits(): GlucoseUnit? = NightscoutParser.parseStatusUnits(get("api/v1/status.json"))
+    fun fetchServerSettings(): ServerSettings = NightscoutParser.parseStatus(get("api/v1/status.json"))
 
     private fun get(pathAndQuery: String): String {
         val (path, query) = pathAndQuery.split('?', limit = 2).let { it[0] to it.getOrNull(1) }

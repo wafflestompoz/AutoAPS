@@ -25,7 +25,7 @@
 - **Android Auto screen** with glucose, trend, delta, IOB, COB and basal, updated every minute.
 - **Home screen widget** in three sizes, updated about every 5 minutes. It's built to Google's guidelines for car widgets, so it's ready for the Android Auto dashboard once Google opens that to other apps.
 - **Stale data is obvious.** After 15 minutes without a new reading, it's marked STALE and the trend arrow and delta are hidden.
-- **LOW and HIGH labels** below 70 mg/dL (3.9 mmol/L) and above 180 mg/dL (10.0 mmol/L).
+- **LOW and HIGH labels** based on the target range set on your Nightscout site (`BG_TARGET_BOTTOM` and `BG_TARGET_TOP`). You can set your own range in the app instead. If neither is set, 70 to 180 mg/dL (3.9 to 10.0 mmol/L) is used.
 - **mg/dL or mmol/L**, taken from your Nightscout settings or chosen in the app.
 - **Read-only.** AutoAPS never writes to Nightscout and can't dose insulin or control any device.
 - **Private.** No accounts, analytics or ads. Your URL and token stay on your phone. See the [privacy policy](PRIVACY.md).
@@ -61,6 +61,7 @@ Use a token, not your API secret. A token with the `readable` role can only read
 1. Open AutoAPS on your phone. Read the safety notice and tick **I understand and accept**.
 2. Enter your Nightscout address, for example `https://my-cgm.example.com`. You can also paste a full link like `https://my-cgm.example.com/?token=…`, and the token is filled in for you.
 3. Paste the token, pick your units, then tap **Test connection**. You should see your current reading.
+4. Optional: turn on **Set my own LOW and HIGH range** if you want different limits from your Nightscout target range.
 
 ### 3. Add the widget (optional)
 
@@ -82,7 +83,7 @@ AutoAPS makes read-only `GET` requests to your Nightscout site:
 
 - `/api/v2/properties/bgnow,delta,direction,iob,cob,basal` for current values.
 - `/api/v1/entries/sgv.json?count=2` as a fallback on older sites, for glucose only.
-- `/api/v1/status.json` to read your units.
+- `/api/v1/status.json` to read your units and target range.
 
 The token is sent as the standard `?token=` parameter. The car screen uses a single Android for Cars `PaneTemplate` whose layout never changes, so the car treats each update as a refresh and never blocks it.
 

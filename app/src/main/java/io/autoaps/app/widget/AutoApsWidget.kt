@@ -52,7 +52,7 @@ class AutoApsWidget : GlanceAppWidget() {
         val snapshot = cache.load(now)
         val lines = snapshot?.let {
             val units = settings.unitsOverride ?: it.serverUnits ?: GlucoseUnit.MGDL
-            DisplayFormatter.format(it, now, DisplaySettings(units = units))
+            DisplayFormatter.format(it, now, DisplaySettings(units = units, rangeOverride = settings.rangeOverride))
         }
         val message = when {
             !settings.isReady -> "Tap to set up AutoAPS"
