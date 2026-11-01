@@ -16,8 +16,23 @@ android {
         versionName = "0.1.0"
     }
 
+    // Release signing comes from environment variables set by the CI release job.
+    // Locally, release builds stay unsigned unless you set the same variables.
+    val keystorePath = System.getenv("SIGNING_KEYSTORE")
+    signingConfigs {
+        if (!keystorePath.isNullOrBlank()) {
+            create("release") {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+                keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+                keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfigs.findByName("release")?.let { signingConfig = it }
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
