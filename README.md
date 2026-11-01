@@ -30,6 +30,14 @@
 - **Read-only.** AutoAPS never writes to Nightscout and can't dose insulin or control any device.
 - **Private.** No accounts, analytics or ads. Your URL and token stay on your phone. See the [privacy policy](PRIVACY.md).
 
+## How it appears in the car
+
+Recent versions of Android Auto only allow sideloaded apps that are media, messaging or notification apps. Car App Library screens like AutoAPS's main car screen are blocked unless the app comes from Google Play. So AutoAPS also shows up as a **media source**:
+
+- Open the Android Auto launcher and tap **AutoAPS**. The "now playing" screen shows your glucose and trend in large type, with the reading's age, IOB, COB and basal underneath.
+- The browse list (the list icon) shows the same information as rows. Tap any row, or Play, to refresh now. It also refreshes every minute.
+- AutoAPS plays no sound, but choosing it as the media source pauses whatever audio app was playing. Switch back to your music app when you're done.
+
 ## What you need
 
 - An Android phone running Android 8.0 or newer, with Android Auto.
