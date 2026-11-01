@@ -55,6 +55,26 @@ class NightscoutParserTest {
     }
 
     @Test
+    fun `parses target range from status thresholds`() {
+        val body = """{"settings":{"units":"mg/dl","thresholds":{"bgHigh":260,"bgTargetTop":160,"bgTargetBottom":80,"bgLow":55}}}"""
+        assertEquals(ServerSettings(GlucoseUnit.MGDL, TargetRange(80.0, 160.0)), NightscoutParser.parseStatus(body))
+    }
+
+    @Test
+    fun `converts mmol thresholds to mg per dL`() {
+        val body = """{"settings":{"units":"mmol","thresholds":{"bgTargetTop":10,"bgTargetBottom":3.9}}}"""
+        val range = assertNotNull(NightscoutParser.parseStatus(body).targetRange)
+        assertEquals(70.3, range.lowMgdl, 0.1)
+        assertEquals(180.2, range.highMgdl, 0.1)
+    }
+
+    @Test
+    fun `ignores missing or invalid thresholds`() {
+        assertNull(NightscoutParser.parseStatus("""{"settings":{"units":"mg/dl"}}""").targetRange)
+        assertNull(NightscoutParser.parseStatus("""{"settings":{"thresholds":{"bgTargetTop":70,"bgTargetBottom":180}}}""").targetRange)
+    }
+
+    @Test
     fun `parses status units`() {
         assertEquals(GlucoseUnit.MMOL, NightscoutParser.parseStatusUnits("""{"settings":{"units":"mmol"}}"""))
         assertEquals(GlucoseUnit.MGDL, NightscoutParser.parseStatusUnits("""{"settings":{"units":"mg/dl"}}"""))

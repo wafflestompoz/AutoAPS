@@ -51,6 +51,15 @@ data class TempBasal(
     val remainingMinutes: Int?,
 )
 
+/**
+ * The user's in-range target from their Nightscout site (BG_TARGET_BOTTOM and
+ * BG_TARGET_TOP), always in mg/dL.
+ */
+data class TargetRange(val lowMgdl: Double, val highMgdl: Double)
+
+/** What AutoAPS reads from Nightscout's status.json. */
+data class ServerSettings(val units: GlucoseUnit?, val targetRange: TargetRange?)
+
 /** Everything the car screen shows, as read from Nightscout at one moment. */
 data class NightscoutSnapshot(
     val glucoseMgdl: Double?,
@@ -67,4 +76,6 @@ data class NightscoutSnapshot(
     val tempBasal: TempBasal?,
     /** Units the Nightscout site is configured to display, when known. */
     val serverUnits: GlucoseUnit?,
+    /** The site's target range, used for the LOW and HIGH labels. Null when unknown. */
+    val targetRange: TargetRange? = null,
 )

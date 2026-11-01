@@ -103,10 +103,29 @@ object NightscoutParser {
     }
 
     /** Reads `settings.units` from `/api/v1/status.json`. */
-    fun parseStatusUnits(body: String): GlucoseUnit? {
-        val root = json.parseToJsonElement(body).asObject() ?: return null
-        return GlucoseUnit.fromNightscout(root["settings"].asObject()?.get("units").asString())
+    fun parseStatusUnits(body: String): GlucoseUnit? = parseStatus(body).units
+
+    /**
+     * Reads units and the target range (`settings.thresholds.bgTargetBottom` and
+     * `bgTargetTop`) from `/api/v1/status.json`.
+     */
+    fun parseStatus(body: String): ServerSettings {
+        val settings = json.parseToJsonElement(body).asObject()?.get("settings").asObject()
+            ?: return ServerSettings(null, null)
+        val units = GlucoseUnit.fromNightscout(settings["units"].asString())
+        val thresholds = settings["thresholds"].asObject()
+        val low = thresholds?.get("bgTargetBottom").asDouble()?.let(::toMgdl)
+        val high = thresholds?.get("bgTargetTop").asDouble()?.let(::toMgdl)
+        val range = if (low != null && high != null && low > 0 && low < high) TargetRange(low, high) else null
+        return ServerSettings(units, range)
     }
+
+    /**
+     * Nightscout reports thresholds in mg/dL, but some mmol/L sites end up with mmol values
+     * (for example 3.9 and 10). No real mg/dL target is below 30, so treat those as mmol/L.
+     */
+    private fun toMgdl(value: Double): Double =
+        if (value < 30) value * DisplayFormatter.MGDL_PER_MMOL else value
 
     private fun JsonElement?.asObject(): JsonObject? = this as? JsonObject
     private fun JsonElement?.asArray(): JsonArray? = this as? JsonArray

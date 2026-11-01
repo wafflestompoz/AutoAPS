@@ -28,7 +28,7 @@ class NightscoutClientTest {
     fun `sends token and reads properties`() {
         respond { req ->
             when {
-                req.path!!.startsWith("/api/v1/status.json") -> MockResponse().setBody("""{"settings":{"units":"mmol"}}""")
+                req.path!!.startsWith("/api/v1/status.json") -> MockResponse().setBody("""{"settings":{"units":"mmol","thresholds":{"bgTargetTop":180,"bgTargetBottom":72}}}""")
                 req.path!!.startsWith("/api/v2/properties") -> MockResponse().setBody(fixture("properties_aaps.json"))
                 else -> MockResponse().setResponseCode(404)
             }
@@ -37,6 +37,7 @@ class NightscoutClientTest {
         val s = client.fetchSnapshot()
         assertEquals(142.0, s.glucoseMgdl)
         assertEquals(GlucoseUnit.MMOL, s.serverUnits)
+        assertEquals(TargetRange(72.0, 180.0), s.targetRange)
         val propsRequest = generateSequence { server.takeRequest(1, java.util.concurrent.TimeUnit.SECONDS) }
             .first { it.path!!.startsWith("/api/v2/") }
         assertEquals("reader-abc123", propsRequest.requestUrl!!.queryParameter("token"))
