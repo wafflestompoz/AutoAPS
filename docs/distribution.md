@@ -8,7 +8,7 @@ Google Play only accepts Android Auto apps that fit a supported category: media,
 
 There is **no health or medical category**. A glucose display doesn't honestly fit any of the existing ones, and declaring a category the app doesn't serve (for example IoT, which is for controlling connected devices like garage doors) is the most likely way to get a Play submission rejected or the developer account flagged.
 
-The manifest currently declares `androidx.car.app.category.IOT`. That's only so the app shows up in the launcher for sideloaded installs; it is **not** a claim that Play would accept it.
+The manifest currently declares `androidx.car.app.category.POI` (IOT was tried first, but didn't appear in the Android Auto launcher in testing). That's only so the app shows up in the launcher for sideloaded installs; it is **not** a claim that Play would accept it.
 
 ## Options
 

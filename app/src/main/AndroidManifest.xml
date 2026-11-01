@@ -42,16 +42,17 @@
         </receiver>
 
         <!--
-          Android Auto has no health category. The category below only decides where the
-          launcher icon appears for sideloaded installs; see docs/distribution.md before
-          submitting anything to Google Play.
+          Android Auto has no health category. POI is used because every Android Auto
+          version supports it (IOT needs a newer host and didn't show up in testing).
+          The category only matters for sideloaded installs here; see
+          docs/distribution.md before submitting anything to Google Play.
         -->
         <service
             android:name=".car.AutoApsCarAppService"
             android:exported="true">
             <intent-filter>
                 <action android:name="androidx.car.app.CarAppService" />
-                <category android:name="androidx.car.app.category.IOT" />
+                <category android:name="androidx.car.app.category.POI" />
             </intent-filter>
         </service>
     </application>
