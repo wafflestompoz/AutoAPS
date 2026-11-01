@@ -1,0 +1,348 @@
+<title>AutoAPS Preview</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a head-unit "screen" as the hero, scenario controls under it, phone setup mock + notes beside. */
+:root {
+  --bg: #eef1f4;
+  --surface: #ffffff;
+  --fg: #16202b;
+  --muted: #5b6977;
+  --line: #d5dce3;
+  --accent: #1e5fa8;
+  --accent-fg: #ffffff;
+  /* Car display is always dark, as Android Auto is. */
+  --car-bg: #0b0f14;
+  --car-row: #161d25;
+  --car-fg: #f3f6f9;
+  --car-muted: #9aa8b6;
+  --car-bezel: #2a323c;
+  --low: #ff6b5e;
+  --high: #ffc247;
+  --stale: #b9a7ff;
+  --font-display: "Barlow", "Roboto", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f141a; --surface: #18202a; --fg: #e6ebf0; --muted: #98a6b4; --line: #2b3542;
+    --accent: #6aa8ee; --accent-fg: #0b1320; --car-bezel: #3a4552; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f141a; --surface: #18202a; --fg: #e6ebf0; --muted: #98a6b4; --line: #2b3542;
+  --accent: #6aa8ee; --accent-fg: #0b1320; --car-bezel: #3a4552; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+}
+.wrap { max-width: 1080px; margin: 0 auto; display: grid; gap: 28px; }
+header h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 4vw, 36px); margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+header p { margin: 4px 0 0; color: var(--muted); max-width: 65ch; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+
+/* Head unit */
+.headunit { background: var(--car-bezel); border-radius: 22px; padding: clamp(8px, 1.6vw, 16px); box-shadow: 0 18px 40px -20px rgba(0,0,0,.45); }
+.screen { container-type: inline-size; background: var(--car-bg); border-radius: 12px; aspect-ratio: 16 / 7; width: 100%; max-width: 100%; overflow: hidden; display: grid; grid-template-columns: 7.5cqw 1fr; color: var(--car-fg); font-family: var(--font-display); }
+.rail { background: #05080b; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 2.2cqw 0; }
+.rail .clock { font-size: 2cqw; font-weight: 600; font-variant-numeric: tabular-nums; }
+.rail .dot { width: 3.6cqw; height: 3.6cqw; border-radius: 50%; background: #1d2630; display: grid; place-items: center; }
+.rail .dot svg { width: 55%; height: 55%; }
+.rail .dot.on { background: #2b6cb3; }
+.app { display: grid; grid-template-rows: auto 1fr auto; padding: 2cqw 2.6cqw 2cqw 2.4cqw; gap: 1.2cqw; min-width: 0; }
+.app-head { display: flex; align-items: center; gap: 1.4cqw; font-size: 2.6cqw; font-weight: 600; }
+.app-head .icon { width: 3.6cqw; height: 3.6cqw; border-radius: 0.8cqw; }
+.rows { display: grid; gap: 0.9cqw; align-content: start; min-width: 0; }
+.row { background: var(--car-row); border-radius: 1cqw; padding: 1.3cqw 2cqw; min-width: 0; }
+.row .t { font-size: 3cqw; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.row .s { font-size: 2cqw; color: var(--car-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row.bg .t { font-size: 4.4cqw; font-weight: 700; letter-spacing: -0.01em; }
+.flag { display: inline-block; font-weight: 700; font-size: 1.8cqw; padding: 0.1cqw 0.9cqw; border-radius: 0.6cqw; margin-right: 0.8cqw; color: #0b0f14; vertical-align: 0.15em; }
+.flag.LOW { background: var(--low); } .flag.HIGH { background: var(--high); } .flag.STALE { background: var(--stale); }
+.actions { display: flex; justify-content: flex-end; }
+.car-btn { font: inherit; font-size: 2.2cqw; font-weight: 600; background: #2b6cb3; color: #fff; border: 0; border-radius: 5cqw; padding: 0.9cqw 3cqw; cursor: pointer; }
+.car-btn:focus-visible { outline: 0.4cqw solid #9cc8ff; outline-offset: 0.3cqw; }
+.loading { display: grid; place-items: center; }
+.spinner { width: 6cqw; height: 6cqw; border-radius: 50%; border: 0.7cqw solid #2a3440; border-top-color: #6aa8ee; animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.message { display: grid; place-items: center; text-align: center; padding: 0 6cqw; font-size: 2.6cqw; color: var(--car-fg); line-height: 1.35; }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+
+/* Controls */
+.controls { display: grid; gap: 14px; }
+.controls-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+.controls h2, .side h2 { font-family: var(--font-display); font-size: 20px; margin: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); padding: 7px 14px; border-radius: 999px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+.chip:focus-visible, .ctl:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; color: var(--muted); font-size: 14px; }
+.ctl { font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-size: 14px; border: 0; background: var(--surface); color: var(--fg); padding: 6px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
+.caption { color: var(--muted); font-size: 14px; margin: 0; max-width: 72ch; }
+.mono { font-family: var(--font-mono); font-size: 13px; }
+
+.lower { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (max-width: 760px) { .lower { grid-template-columns: minmax(0, 1fr); } }
+
+/* Phone mock */
+.phone { background: var(--car-bezel); border-radius: 34px; padding: 10px; max-width: 320px; width: 100%; }
+.phone-screen { background: #fbfcfd; color: #16202b; border-radius: 26px; padding: 18px 16px; display: grid; gap: 10px; font-size: 13px; line-height: 1.45; }
+.phone-screen h3 { margin: 0; font-family: var(--font-display); font-size: 17px; }
+.phone-screen .note { background: #fff4e0; border: 1px solid #f1d39b; border-radius: 10px; padding: 10px; color: #4d3a10; }
+.phone-screen .note ul { margin: 6px 0 0; padding-left: 18px; }
+.phone-screen label { font-weight: 600; font-size: 12px; color: #3a4754; }
+.field { border: 0; border-bottom: 1.5px solid #9aa8b6; padding: 4px 0; font-family: var(--font-mono); font-size: 12.5px; color: #16202b; background: transparent; width: 100%; }
+.check { display: flex; gap: 8px; align-items: center; font-weight: 600; }
+.check .box { width: 16px; height: 16px; border-radius: 3px; background: #1e5fa8; display: grid; place-items: center; flex: none; }
+.pbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pbtn { border-radius: 6px; padding: 8px; text-align: center; font-weight: 600; font-size: 12.5px; background: #1e5fa8; color: #fff; }
+.pbtn.alt { background: #e4ebf2; color: #1e3a5f; }
+.status { font-family: var(--font-mono); font-size: 11.5px; background: #eef3f7; border-radius: 8px; padding: 8px; white-space: pre-wrap; }
+
+.side { display: grid; gap: 18px; min-width: 0; }
+.notes { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.notes li { border-top: 1px solid var(--line); padding-top: 10px; }
+.notes b { font-weight: 600; }
+.feed { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; overflow-x: auto; }
+.feed pre { margin: 0; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55; color: var(--fg); }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Android Auto preview · sample data</div>
+    <h1>AutoAPS on the dashboard</h1>
+    <p>This is a browser mock of the car screen. The text comes from a JavaScript copy of the app's own formatting rules, applied to sample Nightscout readings, so you can see each state before the app is built.</p>
+  </header>
+
+  <section class="headunit" aria-label="Simulated car display">
+    <div class="screen" id="screen">
+      <nav class="rail" aria-hidden="true">
+        <div class="clock" id="clock">12:00</div>
+        <div class="dot"><svg viewBox="0 0 24 24"><path fill="#9aa8b6" d="M12 2 4.5 20.3l.7.7L12 18l6.8 3 .7-.7z"/></svg></div>
+        <div class="dot"><svg viewBox="0 0 24 24"><path fill="#9aa8b6" d="M12 3v10.6A4 4 0 1 0 14 17V7h4V3z"/></svg></div>
+        <div class="dot on"><svg viewBox="0 0 24 24"><path fill="#fff" d="M12 3s-6 7-6 11a6 6 0 0 0 12 0c0-4-6-11-6-11z"/></svg></div>
+        <div class="dot"><svg viewBox="0 0 24 24"><path fill="#9aa8b6" d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg></div>
+      </nav>
+      <div class="app" id="app"></div>
+    </div>
+  </section>
+
+  <section class="controls" aria-label="Scenarios">
+    <div class="controls-head">
+      <h2>Try a scenario</h2>
+      <div class="toolbar">
+        <span>Units</span>
+        <div class="seg" role="group" aria-label="Units">
+          <button id="u-mgdl" aria-pressed="true">mg/dL</button>
+          <button id="u-mmol" aria-pressed="false">mmol/L</button>
+        </div>
+        <button class="ctl" id="advance">Wait 5 minutes with no new data</button>
+      </div>
+    </div>
+    <div class="chips" id="chips"></div>
+    <p class="caption" id="caption"></p>
+  </section>
+
+  <div class="lower">
+    <div>
+      <div class="phone" aria-label="Phone setup screen mock">
+        <div class="phone-screen">
+          <h3>Important: read before use</h3>
+          <div class="note">AutoAPS is not a medical device. It shows a copy of your Nightscout data, which can be delayed or wrong.
+            <ul>
+              <li>Never make treatment decisions from AutoAPS.</li>
+              <li>It has no alarms. Keep CGM alerts on.</li>
+              <li>Don't use or set it up while driving.</li>
+            </ul>
+          </div>
+          <div class="check"><span class="box"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5 5 9l5-6" stroke="#fff" stroke-width="2" fill="none"/></svg></span>I understand and accept</div>
+          <label for="f-url">Nightscout address</label>
+          <input class="field" id="f-url" value="https://my-cgm.example.com" readonly>
+          <label for="f-token">Access token (read-only role)</label>
+          <input class="field" id="f-token" value="••••••••••••••••••" readonly>
+          <label for="f-units">Units</label>
+          <input class="field" id="f-units" value="Use my Nightscout setting" readonly>
+          <div class="pbtns"><span class="pbtn alt">Test connection</span><span class="pbtn">Save</span></div>
+          <div class="status" id="phone-status"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <h2>What you're looking at</h2>
+      <ul class="notes">
+        <li><b>One screen, three rows.</b> The title and row count stay fixed, so Android Auto treats each 60-second update as a refresh. That keeps the app clear of the car's limit on screen changes.</li>
+        <li><b>Stale readings.</b> After 15 minutes without new data, the trend arrow and delta are hidden and the reading is marked STALE. Press "Wait 5 minutes" a few times to see it.</li>
+        <li><b>LOW and HIGH labels</b> appear below 70 and above 180 mg/dL. The app has no alarms on purpose.</li>
+        <li><b>Errors keep the last reading.</b> If Nightscout can't be reached, the last good values stay on screen with their age, and the reason appears on the bottom row.</li>
+      </ul>
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">Sample Nightscout data for this scenario</div>
+        <div class="feed"><pre id="feed"></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const MGDL_PER_MMOL = 18.0182;
+  const ARROWS = { DoubleUp: "⇈", SingleUp: "↑", FortyFiveUp: "↗", Flat: "→", FortyFiveDown: "↘", SingleDown: "↓", DoubleDown: "⇊" };
+  const MIN = 60000;
+
+  // Ported from core/src/main/kotlin/io/autoaps/core/DisplayFormatter.kt
+  const fmtGlucose = (mgdl, u) => u === "MMOL" ? (mgdl / MGDL_PER_MMOL).toFixed(1) : String(Math.round(mgdl));
+  function fmtDelta(d, u) {
+    const text = u === "MMOL" ? Math.abs(d / MGDL_PER_MMOL).toFixed(1) : (Math.round(d) === 0 ? "0" : String(Math.abs(Math.round(d))));
+    const sign = text.replace(/^[0.]+/, "") === "" ? "±" : (d > 0 ? "+" : "-");
+    return sign + text;
+  }
+  const fmtMinutes = m => m < 120 ? `${m} min` : `${Math.floor(m / 60)} h`;
+  function fmtBasal(s) {
+    const t = s.temp;
+    if (t) {
+      let out = `Temp basal ${t.rate.toFixed(2)} U/h`;
+      if (t.percent != null) out += ` (${t.percent}%)`;
+      if (t.remaining != null) out += ` · ${Math.max(0, t.remaining)} min left`;
+      return out;
+    }
+    return s.scheduled != null ? `Basal ${s.scheduled.toFixed(2)} U/h (scheduled)` : "Basal --";
+  }
+  function format(s, now, u) {
+    const age = s.time == null ? null : Math.max(0, Math.floor((now - s.time) / MIN));
+    const stale = age == null || age >= 15;
+    let glucose = "No glucose reading";
+    if (s.mgdl != null) {
+      glucose = `${fmtGlucose(s.mgdl, u)} ${u === "MMOL" ? "mmol/L" : "mg/dL"}`;
+      if (!stale) {
+        glucose += `  ${ARROWS[s.direction] || "?"}`;
+        if (s.delta != null) glucose += `  ${fmtDelta(s.delta, u)}`;
+      }
+    }
+    const ageText = age == null ? "Reading time unknown" : stale ? `last reading ${fmtMinutes(age)} ago` : age === 0 ? "Just now" : `${fmtMinutes(age)} ago`;
+    const flag = s.mgdl == null ? null : stale ? "STALE" : s.mgdl < 70 ? "LOW" : s.mgdl > 180 ? "HIGH" : null;
+    const iob = s.iob != null ? `IOB ${s.iob.toFixed(2)} U` : "IOB --";
+    const cob = s.cob != null ? `COB ${Math.round(s.cob)} g` : "COB --";
+    return { glucose, ageText, flag, iobCob: `${iob}  ·  ${cob}`, basal: fmtBasal(s) };
+  }
+
+  const FOOTER = "Not for treatment decisions. Confirm with your CGM.";
+  const SCENARIOS = [
+    { id: "steady", label: "In range, temp basal running", caption: "AAPS has set a temp basal below the scheduled 0.80 U/h. The phone app's Test connection button shows the same values.",
+      data: { mgdl: 142, delta: 4, direction: "FortyFiveUp", iob: 1.234, cob: 18.4, scheduled: 0.8, temp: { rate: 0.5, percent: 62, remaining: 26 } }, ageMin: 1 },
+    { id: "low", label: "Low and falling", caption: "Below 70 mg/dL the reading gets a LOW label. The loop has suspended basal, so the temp basal is 0 U/h.",
+      data: { mgdl: 64, delta: -7, direction: "SingleDown", iob: 0.41, cob: 0, scheduled: 0.8, temp: { rate: 0, percent: 0, remaining: 18 } }, ageMin: 2 },
+    { id: "high", label: "High after a meal", caption: "Above 180 mg/dL the reading gets a HIGH label. COB shows carbs still being absorbed.",
+      data: { mgdl: 231, delta: 12, direction: "SingleUp", iob: 3.86, cob: 42, scheduled: 0.8, temp: { rate: 2.4, percent: 300, remaining: 21 } }, ageMin: 0 },
+    { id: "scheduled", label: "No temp basal", caption: "When no temp basal is running, the bottom row shows the scheduled profile basal.",
+      data: { mgdl: 108, delta: 0.2, direction: "Flat", iob: 0, cob: 0, scheduled: 0.85, temp: null }, ageMin: 4 },
+    { id: "stale", label: "CGM signal lost", caption: "The newest reading is 23 minutes old. The arrow and delta are hidden so old data isn't mistaken for current data.",
+      data: { mgdl: 156, delta: 3, direction: "Flat", iob: 0.92, cob: 6, scheduled: 0.8, temp: null }, ageMin: 23 },
+    { id: "offline", label: "No signal in the car", caption: "The last good values stay on screen. The bottom row explains why the screen isn't updating.",
+      data: { mgdl: 121, delta: -2, direction: "FortyFiveDown", iob: 0.55, cob: 0, scheduled: 0.8, temp: { rate: 0.6, percent: 75, remaining: 9 } }, ageMin: 6,
+      error: "Can't reach Nightscout. Check the address and your connection." },
+    { id: "basic", label: "CGM only, no loop", caption: "With a CGM uploader but no AAPS/Loop, Nightscout has no IOB, COB or basal data, so those fields show dashes.",
+      data: { mgdl: 97, delta: -1, direction: "Flat", iob: null, cob: null, scheduled: null, temp: null }, ageMin: 3 },
+    { id: "setup", label: "First launch in the car", caption: "Until the user finishes setup on the phone, the car shows only this message. Long text and forms aren't allowed on the car screen while driving.", setup: true },
+  ];
+
+  const state = { scenario: SCENARIOS[0], units: "MGDL", extraMin: 0, loading: false, baseNow: Date.now() };
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  const ICON = `<svg class="icon" viewBox="0 0 108 108" aria-hidden="true"><rect width="108" height="108" rx="20" fill="#1E3A5F"/><path fill="#fff" d="M54 20S30 48 30 64a24 24 0 0 0 48 0C78 48 54 20 54 20z"/><path d="M40 68l10-10 8 6 10-12" stroke="#1E3A5F" stroke-width="5" stroke-linecap="round" fill="none"/></svg>`;
+
+  function renderCar() {
+    const sc = state.scenario;
+    const now = state.baseNow + state.extraMin * MIN;
+    const d = new Date(now);
+    $("clock").textContent = `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`;
+    const head = `<div class="app-head">${ICON}<span>AutoAPS</span></div>`;
+
+    if (sc.setup) {
+      $("app").innerHTML = head + `<div class="message">Open AutoAPS on your phone (while parked) to enter your Nightscout address and accept the safety notice.</div><div class="actions"><button class="car-btn" id="carbtn">Check again</button></div>`;
+      $("carbtn").onclick = () => refresh();
+      $("phone-status").textContent = "Not set up yet.";
+      $("feed").textContent = "(no requests until setup is complete)";
+      return;
+    }
+    if (state.loading) {
+      $("app").innerHTML = head + `<div class="loading"><div class="spinner" role="status" aria-label="Loading"></div></div><div class="actions"></div>`;
+      return;
+    }
+    const s = { ...sc.data, time: state.baseNow - sc.ageMin * MIN };
+    const L = format(s, now, state.units);
+    const flag = L.flag ? `<span class="flag ${L.flag}">${L.flag}</span>` : "";
+    const footer = sc.error ? `Can't update: ${sc.error}` : FOOTER;
+    $("app").innerHTML = head + `
+      <div class="rows">
+        <div class="row bg"><div class="t">${esc(L.glucose)}</div><div class="s">${flag}${esc(L.ageText)}</div></div>
+        <div class="row"><div class="t">${esc(L.iobCob)}</div></div>
+        <div class="row"><div class="t">${esc(L.basal)}</div><div class="s">${esc(footer)}</div></div>
+      </div>
+      <div class="actions"><button class="car-btn" id="carbtn">Refresh</button></div>`;
+    $("carbtn").onclick = () => refresh();
+
+    $("phone-status").textContent = sc.error ? `Couldn't connect: ${sc.error}` : `Connected.\n${L.glucose}  (${L.flag === "STALE" ? "STALE: " : ""}${L.ageText})\n${L.iobCob}\n${L.basal}`;
+    $("feed").textContent = feedFor(sc, s);
+  }
+
+  function feedFor(sc, s) {
+    const props = {
+      bgnow: { last: s.mgdl, mills: s.time, sgvs: [{ mgdl: s.mgdl, direction: s.direction }] },
+      delta: { mgdl: s.delta },
+      direction: { value: s.direction },
+    };
+    if (s.iob != null) props.iob = { iob: s.iob };
+    if (s.cob != null) props.cob = { cob: s.cob };
+    if (s.scheduled != null) {
+      props.basal = { current: { basal: s.scheduled, tempbasal: s.temp ? s.temp.rate : s.scheduled } };
+      if (s.temp) props.basal.current.treatment = { eventType: "Temp Basal", rate: s.temp.rate, duration: 30 };
+    }
+    const req = "GET /api/v2/properties/bgnow,delta,direction,iob,cob,basal?token=…";
+    if (sc.error) return `${req}\n→ network error (timeout)\n\nShowing the previous response:\n` + JSON.stringify(props, null, 2);
+    return `${req}\n→ 200 OK\n` + JSON.stringify(props, null, 2);
+  }
+
+  function refresh() {
+    state.loading = true; renderCar();
+    setTimeout(() => { state.loading = false; renderCar(); }, 650);
+  }
+
+  function select(sc) {
+    state.scenario = sc; state.extraMin = 0;
+    [...$("chips").children].forEach(b => b.setAttribute("aria-pressed", String(b.dataset.id === sc.id)));
+    $("caption").textContent = sc.caption;
+    $("advance").disabled = !!sc.setup;
+    refresh();
+  }
+
+  SCENARIOS.forEach(sc => {
+    const b = document.createElement("button");
+    b.className = "chip"; b.textContent = sc.label; b.dataset.id = sc.id; b.id = "sc-" + sc.id;
+    b.onclick = () => select(sc);
+    $("chips").appendChild(b);
+  });
+  const setUnits = u => {
+    state.units = u;
+    $("u-mgdl").setAttribute("aria-pressed", String(u === "MGDL"));
+    $("u-mmol").setAttribute("aria-pressed", String(u === "MMOL"));
+    renderCar();
+  };
+  $("u-mgdl").onclick = () => setUnits("MGDL");
+  $("u-mmol").onclick = () => setUnits("MMOL");
+  $("advance").onclick = () => { state.extraMin += 5; renderCar(); };
+
+  select(SCENARIOS[0]);
+  state.loading = false; renderCar();
+})();
+</script>
