@@ -29,6 +29,15 @@
             </intent-filter>
         </activity>
 
+        <!-- Media-style display: the route that works for sideloaded installs. -->
+        <service
+            android:name=".media.GlucoseMediaService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
         <receiver
             android:name=".widget.AutoApsWidgetReceiver"
             android:exported="true"
